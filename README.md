@@ -1,6 +1,6 @@
 # roslibdart
 
-The is a fork of the original roslib by @artrmz, @TimWhiting, @artrmz. roslibdart is a library for communicating to a ROS node over websockets with rosbridge. It is heavily influenced by roslibjs and follows the same structure. This fork is an effort to update the library and make it compatible to ros2 and dart2.
+The is a fork of the original roslib by Eternali Conrad Heidebrecht (@Eternali), Artur Rymarz (@artrmz), TimWhiting Tim Whiting (@TimWhiting). roslibdart is a library for communicating to a ROS node over websockets with rosbridge. It is heavily influenced by roslibjs and follows the same structure. This fork is an effort to update the library and make it compatible to null safety, dart2 and ros2.
 
 ## List of feature implementation statuses (essentially a list of features required to reach roslibjs's level)
 - [X] Core:
@@ -9,14 +9,7 @@ The is a fork of the original roslib by @artrmz, @TimWhiting, @artrmz. roslibdar
   - [x] Service object (call, advertise, unadvertise)
   - [x] Request object (provides typing and naming to any potential ROS request)
   - [x] Param object (get, set, delete)
-- [ ] Actionlib:
-  - [ ] ActionClient
-  - [ ] ActionListener
-  - [ ] Goal
-  - [ ] SimpleActionServer
-- [ ] Support TCP connections
-- [ ] TFClient (listen to TFs from tf2_web_republisher)
-- [ ] URDF (Box, Color, Cylinder, Joint, Material, Mesh, Model, Sphere, Types, Visual)
+
 
 ## Usage
 ### Install rosbridge
@@ -32,6 +25,7 @@ colcon build
 ```
 ### Run ros bridge
 ```
+cd ros_ws
 source install/local_setup.bash
 ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
@@ -51,3 +45,7 @@ flutter run -d linux
 ```
 
 
+## Links
+- [ROSBridge Protocol v2.0](https://github.com/biobotus/rosbridge_suite/blob/master/ROSBRIDGE_PROTOCOL.md).
+- [Original roslib library from Conrad Heidebrecht](https://github.com/Eternali/roslib)
+- [RosBridge server implementation](https://github.com/RobotWebTools/rosbridge_suite)

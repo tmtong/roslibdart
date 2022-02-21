@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:roslib/roslib.dart';
+import 'package:roslibdart/roslibdart.dart';
 
 void main() {
   runApp(const ExampleApp());
@@ -10,7 +10,7 @@ class ExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Roslib Example',
+      title: 'Roslibdart subscriber Example',
       home: HomePage(),
     );
   }
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Roslib Subscriber Example'),
+        title: const Text('Roslibdart Subscriber Example'),
       ),
       body: StreamBuilder<Object>(
           stream: ros.statusStream,
