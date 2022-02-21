@@ -1,6 +1,6 @@
 # roslibdart
 
-The is a fork of the original roslib by @artrmz, @TimWhiting, @artrmz. roslibdart is a library for communicating to a ROS node over websockets with rosbridge. It is heavily influenced by roslibjs and follows the same structure. This is an effort to update the library and mark it compatible to ros2 and dart2.
+The is a fork of the original roslib by @artrmz, @TimWhiting, @artrmz. roslibdart is a library for communicating to a ROS node over websockets with rosbridge. It is heavily influenced by roslibjs and follows the same structure. This fork is an effort to update the library and make it compatible to ros2 and dart2.
 
 ## List of feature implementation statuses (essentially a list of features required to reach roslibjs's level)
 - [X] Core:
