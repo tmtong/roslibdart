@@ -31,7 +31,7 @@ ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
 ## Testing publisher
 
-### Run topic publisher
+### Demostration: running ros publisher and roslibdart subscriber
 ```
 # Assume ros_ws is your workspace
 cp -r rospackage/* ~/ros_ws/src/
@@ -40,12 +40,12 @@ colcon build
 source install/local_setup.bash
 ros2 run tutorial publisher
 ```
-### Fire up flutter subscriber
+
 ```
 cd example/subscriber
 flutter run -d linux
 ```
-### Subscribe using roslibdart
+### Example code of using roslibdart to subscribe
 ```
 ros = Ros(url: 'ws://127.0.0.1:9090');
 chatter = Topic(ros: ros, name: '/topic', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
@@ -61,16 +61,16 @@ Future<void> subscribeHandler(Map<String, dynamic> msg) async {
 
 
 ## Testing subscriber
-### Run topic subscriber
+### Demostration: running ros subscriber and roslibdart publisher
 ```
 ros2 run tutorial subscriber
 ```
-### Fire up flutter publisher
+
 ```
 cd example/publisher
 flutter run -d linux
 ```
-### Publish using roslibdart
+### Example code of using roslibdart to Publish 
 ```
 ros = Ros(url: 'ws://127.0.0.1:9090');
 chatter = Topic(ros: ros, name: '/topic', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
@@ -80,15 +80,16 @@ await chatter.publish(json);
 ```
 
 ## Testing call 
-### Run tutorial addtwoint service
+### Demostration: running roslibdart caller and ros service
 ```
 ros2 run tutorial service
 ```
+
 ```
-cd example/client
+cd example/caller
 flutter run -d linux
 ```
-### Call a service using roslibdart
+### Example code of using roslibdart to call a service 
 ```
 ros = Ros(url: 'ws://127.0.0.1:9090');
 service = Service(name: 'add_two_ints', ros: ros, type: "tutorial_interfaces/AddTwoInts");
@@ -97,22 +98,19 @@ Map<String, dynamic> json = {"a": 1, "b": 2};
 Map<String, dynamic> result = await service.call(json);
 msgToPublished = result['sum'];
 ```
+
+
 ## Testing providing service
-### Fire up flutter service
+### Demostration: running roslibdart service and ros caller
 ```
 cd example/service
 flutter run -d linux
 ```
-### Run tutorial call
-```
-ros2 run tutorial client
-```
 
-### Run the client from shell
 ```
-ros2 run tutorial client 2 3
+ros2 run tutorial caller 2 3
 ```
-### Provide service using roslibdart
+### Example code of using roslibdart to provide service
 ```
 ros = Ros(url: 'ws://127.0.0.1:9090');
 service = Service(name: 'add_two_ints', ros: ros, type: "tutorial_interfaces/AddTwoInts");
