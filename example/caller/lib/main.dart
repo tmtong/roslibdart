@@ -14,11 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Roslibdart Service Example',
+      title: 'Roslibdart Caller Example',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Roslibdart Service Example'),
+      home: const MyHomePage(title: 'Roslibdart Caller Example'),
     );
   }
 }
@@ -44,23 +44,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
     super.initState();
     ros.connect();
-    Timer(const Duration(seconds: 3), () async {
-      await service.advertise(serviceHandler);
+
+    Timer.periodic(const Duration(seconds: 3), (timer) async {
+      // this is defind in tutorial_interfaces/srv/AddTwoInts.srv
+      Map<String, dynamic> json = {"a": 1, "b": 2};
+      Map<String, dynamic> result = await service.call(json);
+      msgToPublished = result['sum'];
+      setState(() {});
     });
   }
 
   void destroyConnection() async {
     await ros.close();
     setState(() {});
-  }
-
-  Future<Map<String, dynamic>>? serviceHandler(
-      Map<String, dynamic> args) async {
-    Map<String, dynamic> response = {};
-    response['sum'] = args['a'] + args['b'];
-    msgToPublished = response['sum'];
-    setState(() {});
-    return response;
   }
 
   @override
@@ -77,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Service returns answer ' + msgToPublished.toString()),
+            Text('Got the answer ' + msgToPublished.toString()),
           ],
         ),
       ),

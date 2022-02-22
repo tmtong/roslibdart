@@ -4,6 +4,9 @@ import 'dart:async';
 import 'ros.dart';
 import 'request.dart';
 
+// Receiver function to handle requests when the service is advertising.
+typedef SubscribeHandler = Future<void> Function(Map<String, dynamic> args);
+
 /// Wrapper to interact with ROS topics.
 class Topic {
   Topic({
@@ -72,7 +75,7 @@ class Topic {
   ///
   /// Defaults to true.
   bool reconnectOnClose;
-
+  /*
   /// Subscribe to the topic if not already subscribed.
   Future<void> subscribe() async {
     if (subscribeId == null) {
@@ -89,6 +92,30 @@ class Topic {
         throttleRate: throttleRate,
         queueLength: queueLength,
       ));
+    }
+  }
+  */
+
+  Future<void> subscribe(SubscribeHandler subscribeHandler) async {
+    if (subscribeId == null) {
+      // Create the listenable broadcast subscription stream.
+      subscription = ros.stream;
+      subscribeId = ros.requestSubscriber(name);
+      await safeSend(Request(
+        op: 'subscribe',
+        id: subscribeId,
+        type: type,
+        topic: name,
+        compression: compression,
+        throttleRate: throttleRate,
+        queueLength: queueLength,
+      ));
+      subscription!.listen((Map<String, dynamic> message) async {
+        if (message['topic'] != name) {
+          return;
+        }
+        await subscribeHandler(message['msg']);
+      });
     }
   }
 

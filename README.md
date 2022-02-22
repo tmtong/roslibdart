@@ -45,6 +45,21 @@ ros2 run tutorial publisher
 cd example/subscriber
 flutter run -d linux
 ```
+### Subscribe using roslibdart
+```
+ros = Ros(url: 'ws://127.0.0.1:9090');
+chatter = Topic(ros: ros, name: '/topic', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+ros.connect();
+await chatter.subscribe(subscribeHandler);
+
+Future<void> subscribeHandler(Map<String, dynamic> msg) async {
+  msgReceived = json.encode(msg);
+  setState(() {});
+}
+```
+
+
+
 ## Testing subscriber
 ### Run topic subscriber
 ```
@@ -54,8 +69,16 @@ ros2 run tutorial subscriber
 ```
 cd example/publisher
 flutter run -d linux
-
 ```
+### Publish using roslibdart
+```
+ros = Ros(url: 'ws://127.0.0.1:9090');
+chatter = Topic(ros: ros, name: '/topic', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+ros.connect();
+Map<String, dynamic> json = {"data": msgToPublished.toString()};
+await chatter.publish(json);
+```
+
 ## Testing call 
 ### Run tutorial addtwoint service
 ```
@@ -65,18 +88,46 @@ ros2 run tutorial service
 cd example/client
 flutter run -d linux
 ```
-
-
+### Call a service using roslibdart
+```
+ros = Ros(url: 'ws://127.0.0.1:9090');
+service = Service(name: 'add_two_ints', ros: ros, type: "tutorial_interfaces/AddTwoInts");
+ros.connect();
+Map<String, dynamic> json = {"a": 1, "b": 2};
+Map<String, dynamic> result = await service.call(json);
+msgToPublished = result['sum'];
+```
 ## Testing providing service
 ### Fire up flutter service
-
-
+```
+cd example/service
+flutter run -d linux
+```
+### Run tutorial call
+```
+ros2 run tutorial client
+```
 
 ### Run the client from shell
 ```
 ros2 run tutorial client 2 3
 ```
+### Provide service using roslibdart
+```
+ros = Ros(url: 'ws://127.0.0.1:9090');
+service = Service(name: 'add_two_ints', ros: ros, type: "tutorial_interfaces/AddTwoInts");
+ros.connect();
+await service.advertise(serviceHandler);
+
+Future<Map<String, dynamic>>? serviceHandler(Map<String, dynamic> args) async {
+  Map<String, dynamic> response = {};
+  response['sum'] = args['a'] + args['b'];
+  return response;
+}
+```
+
 ## Links
 - [ROSBridge Protocol v2.0](https://github.com/biobotus/rosbridge_suite/blob/master/ROSBRIDGE_PROTOCOL.md).
 - [Original roslib library from Conrad Heidebrecht](https://github.com/Eternali/roslib)
 - [RosBridge server implementation](https://github.com/RobotWebTools/rosbridge_suite)
+- [roslibjs example](https://github.com/RobotWebTools/roslibjs/blob/develop/examples/simple.html)

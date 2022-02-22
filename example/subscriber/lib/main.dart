@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:roslibdart/roslibdart.dart';
+import 'dart:async';
+import 'dart:convert';
 
 void main() {
   runApp(const ExampleApp());
@@ -37,17 +39,22 @@ class _HomePageState extends State<HomePage> {
         queueLength: 10,
         queueSize: 10);
     super.initState();
-  }
-
-  void initConnection() async {
     ros.connect();
-    await chatter.subscribe();
-    setState(() {});
+    Timer(const Duration(seconds: 3), () async {
+      await chatter.subscribe(subscribeHandler);
+      // await chatter.subscribe();
+    });
   }
 
   void destroyConnection() async {
     await chatter.unsubscribe();
     await ros.close();
+    setState(() {});
+  }
+
+  String msgReceived = '';
+  Future<void> subscribeHandler(Map<String, dynamic> msg) async {
+    msgReceived = json.encode(msg);
     setState(() {});
   }
 
@@ -57,45 +64,16 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Roslibdart Subscriber Example'),
       ),
-      body: StreamBuilder<Object>(
-          stream: ros.statusStream,
-          builder: (context, snapshot) {
-            return Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  StreamBuilder<Map<String, dynamic>>(
-                    stream: chatter.subscription,
-                    builder: (BuildContext context2,
-                        AsyncSnapshot<Map<String, dynamic>> snapshot2) {
-                      if (snapshot2.hasData && snapshot2.data != null) {
-                        return Text('${snapshot2.data!['msg']}');
-                      } else {
-                        return const CircularProgressIndicator();
-                      }
-                    },
-                  ),
-                  ActionChip(
-                    label: Text(snapshot.data == Status.connected
-                        ? 'DISCONNECT'
-                        : 'CONNECT'),
-                    backgroundColor: snapshot.data == Status.connected
-                        ? Colors.green[300]
-                        : Colors.grey[300],
-                    onPressed: () {
-                      // print(snapshot.data);
-                      if (snapshot.data != Status.connected) {
-                        initConnection();
-                      } else {
-                        destroyConnection();
-                      }
-                    },
-                  ),
-                ],
-              ),
-            );
-          }),
+      body: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(msgReceived + ' received'),
+          ],
+        ),
+      ),
     );
   }
 }
