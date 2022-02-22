@@ -29,6 +29,8 @@ cd ros_ws
 source install/local_setup.bash
 ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
+## Testing publisher
+
 ### Run topic publisher
 ```
 # Assume ros_ws is your workspace
@@ -43,8 +45,37 @@ ros2 run tutorial publisher
 cd example/subscriber
 flutter run -d linux
 ```
+## Testing subscriber
+### Run topic subscriber
+```
+ros2 run tutorial subscriber
+```
+### Fire up flutter publisher
+```
+cd example/publisher
+flutter run -d linux
+
+```
+## Testing call 
+### Run tutorial addtwoint service
+```
+ros2 run tutorial service
+```
+```
+cd example/client
+flutter run -d linux
+```
 
 
+## Testing providing service
+### Fire up flutter service
+
+
+
+### Run the client from shell
+```
+ros2 run tutorial client 2 3
+```
 ## Links
 - [ROSBridge Protocol v2.0](https://github.com/biobotus/rosbridge_suite/blob/master/ROSBRIDGE_PROTOCOL.md).
 - [Original roslib library from Conrad Heidebrecht](https://github.com/Eternali/roslib)

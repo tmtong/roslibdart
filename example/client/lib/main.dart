@@ -14,11 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Roslibdart Publisher Example',
+      title: 'Roslibdart Client Example',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Roslibdart Publisher Example'),
+      home: const MyHomePage(title: 'Roslibdart Client Example'),
     );
   }
 }
@@ -34,30 +34,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Ros ros;
-  late Topic chatter;
-
+  late Service service;
+  int msgToPublished = 0;
   @override
   void initState() {
     ros = Ros(url: 'ws://127.0.0.1:9090');
-    chatter = Topic(
-        ros: ros,
-        name: '/topic',
-        type: "std_msgs/String",
-        reconnectOnClose: true,
-        queueLength: 10,
-        queueSize: 10);
+    service = Service(
+        name: 'add_two_ints', ros: ros, type: "tutorial_interfaces/AddTwoInts");
+
     super.initState();
     ros.connect();
 
     Timer.periodic(const Duration(seconds: 3), (timer) async {
-      msgToPublished++;
-      Map<String, dynamic> json = {"data": msgToPublished.toString()};
-      await chatter.publish(json);
+      // this is defind in tutorial_interfaces/srv/AddTwoInts.srv
+      Map<String, dynamic> json = {"a": 1, "b": 2};
+      Map<String, dynamic> result = await service.call(json);
+      msgToPublished = result['sum'];
       setState(() {});
     });
   }
 
-  int msgToPublished = 0;
   void initConnection() async {
     setState(() {});
   }
@@ -81,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(msgToPublished.toString() + ' published'),
+            Text('Got the answer ' + msgToPublished.toString()),
           ],
         ),
       ),

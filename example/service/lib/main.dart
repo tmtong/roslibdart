@@ -14,11 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Roslibdart Publisher Example',
+      title: 'Roslibdart Service Example',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Roslibdart Publisher Example'),
+      home: const MyHomePage(title: 'Roslibdart Service Example'),
     );
   }
 }
@@ -34,30 +34,21 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Ros ros;
-  late Topic chatter;
-
+  late Service service;
+  int msgToPublished = 0;
   @override
   void initState() {
     ros = Ros(url: 'ws://127.0.0.1:9090');
-    chatter = Topic(
-        ros: ros,
-        name: '/topic',
-        type: "std_msgs/String",
-        reconnectOnClose: true,
-        queueLength: 10,
-        queueSize: 10);
+    service = Service(
+        name: 'add_two_ints', ros: ros, type: "tutorial_interfaces/AddTwoInts");
+
     super.initState();
     ros.connect();
-
-    Timer.periodic(const Duration(seconds: 3), (timer) async {
-      msgToPublished++;
-      Map<String, dynamic> json = {"data": msgToPublished.toString()};
-      await chatter.publish(json);
-      setState(() {});
+    Timer(const Duration(seconds: 3), () async {
+      await service.advertise(serviceHandler);
     });
   }
 
-  int msgToPublished = 0;
   void initConnection() async {
     setState(() {});
   }
@@ -65,6 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
   void destroyConnection() async {
     await ros.close();
     setState(() {});
+  }
+
+  Future<Map<String, dynamic>>? serviceHandler(
+      Map<String, dynamic> args) async {
+    Map<String, dynamic> response = {};
+    response['sum'] = args['a'] + args['b'];
+    msgToPublished = response['sum'];
+    setState(() {});
+    return response;
   }
 
   @override
@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(msgToPublished.toString() + ' published'),
+            Text('return answer ' + msgToPublished.toString()),
           ],
         ),
       ),

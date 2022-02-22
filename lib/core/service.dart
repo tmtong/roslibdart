@@ -5,7 +5,8 @@ import 'ros.dart';
 import 'request.dart';
 
 // Receiver function to handle requests when the service is advertising.
-typedef ServiceHandler = Future Function(dynamic request);
+typedef ServiceHandler = Future<Map<String, dynamic>>? Function(
+    Map<String, dynamic> args);
 
 /// Wrapper to interact with ROS services.
 class Service {
@@ -25,7 +26,7 @@ class Service {
   String type;
 
   /// Advertiser that is listened to for service requests when advertising.
-  Stream? _advertiser;
+  Stream<Map<String, dynamic>>? _advertiser;
 
   /// Checks whether or not the service is currently advertising.
   bool get isAdvertised => _advertiser != null;
@@ -71,9 +72,25 @@ class Service {
     ));
     // Listen for requests, forward them to the handler and then
     // send the response back to the ROS node.
+    _advertiser = ros.stream;
+    _advertiser!.listen((Map<String, dynamic> message) async {
+      if (message['service'] != name) {
+        return;
+      }
+      Map<String, dynamic>? resp = await handler(message['args']);
+      ros.send(Request(
+        op: 'service_response',
+        id: message['id'],
+        service: name,
+        values: resp ?? {},
+        result: resp != null,
+      ));
+    });
+
+    /*
     _advertiser = ros.stream
         .where((message) => message['service'] == name)
-        .asyncMap((req) => handler(req['args']).then((resp) {
+        .asyncMap((req) => handler(req['args'])!.then((resp) {
               ros.send(Request(
                 op: 'service_response',
                 id: req['id'],
@@ -82,6 +99,7 @@ class Service {
                 result: resp != null,
               ));
             }));
+            */
   }
 
   // Stop advertising the service.
