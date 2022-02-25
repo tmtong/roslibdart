@@ -128,6 +128,8 @@ Future<Map<String, dynamic>>? serviceHandler(Map<String, dynamic> args) async {
 
 Please take a look at example/pspad
 
+![PS Pad Screenshot](./doc/pspad-screenshot.png)
+
 ## Links
 - [ROSBridge Protocol v2.0](https://github.com/biobotus/rosbridge_suite/blob/master/ROSBRIDGE_PROTOCOL.md).
 - [Original roslib library from Conrad Heidebrecht](https://github.com/Eternali/roslib)
