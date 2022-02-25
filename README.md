@@ -124,6 +124,10 @@ Future<Map<String, dynamic>>? serviceHandler(Map<String, dynamic> args) async {
 }
 ```
 
+## Playstsation control pad to control turtlesim
+
+Please take a look at example/pspad
+
 ## Links
 - [ROSBridge Protocol v2.0](https://github.com/biobotus/rosbridge_suite/blob/master/ROSBRIDGE_PROTOCOL.md).
 - [Original roslib library from Conrad Heidebrecht](https://github.com/Eternali/roslib)
