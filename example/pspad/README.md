@@ -17,6 +17,10 @@ cd pspad
 flutter run -d linux
 ```
 
+### Screenshot
+![PS Pad Screenshot](./doc/pspad-screenshot.png)
+![Turtlesim Screenshot](./doc/turtlesim-screenshot.png)
+
 ### How to use the control pad
 ```
 void initState() {
