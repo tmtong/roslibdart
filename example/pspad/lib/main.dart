@@ -88,7 +88,7 @@ class _RoslibPSPadState extends State<RoslibPSPad> {
         twist['angular'] == {'x': 0.0, 'y': 0.0, 'z': 0.0}) {
       return;
     }
-
+    print('Direction to published ' + jsonEncode(twist));
     cmdVelTopic.publish(twist);
     lastDirectionTwist = twist;
   }

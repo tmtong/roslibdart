@@ -395,10 +395,10 @@ class _KeyPadState extends State<KeyPad> {
           top: circleDiameter - shortMargin - keySize / 2,
           child: Listener(
               onPointerDown: (event) {
-                widget.triangleCallback(-1);
+                widget.crossCallback(-1);
               },
               onPointerUp: (event) {
-                widget.triangleCallback(1);
+                widget.crossCallback(1);
               },
               child: Container(
                 width: keySize,
@@ -414,10 +414,10 @@ class _KeyPadState extends State<KeyPad> {
           top: circleDiameter / 2 - keySize / 2,
           child: Listener(
               onPointerDown: (event) {
-                widget.triangleCallback(-1);
+                widget.squareCallback(-1);
               },
               onPointerUp: (event) {
-                widget.triangleCallback(1);
+                widget.squareCallback(1);
               },
               child: Container(
                 width: keySize,
@@ -433,10 +433,10 @@ class _KeyPadState extends State<KeyPad> {
           top: circleDiameter / 2 - keySize / 2,
           child: Listener(
               onPointerDown: (event) {
-                widget.triangleCallback(-1);
+                widget.circleCallback(-1);
               },
               onPointerUp: (event) {
-                widget.triangleCallback(1);
+                widget.circleCallback(1);
               },
               child: Container(
                 width: keySize,
