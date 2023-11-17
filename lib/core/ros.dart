@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 // ignore: uri_does_not_exist
@@ -75,26 +76,33 @@ class Ros {
   void connect({dynamic url}) {
     this.url = url ?? this.url;
     url ??= this.url;
-    try {
-      // Initialize the connection to the ROS node with a Websocket channel.
-      _channel = initializeWebSocketChannel(url);
-      stream = _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
-      // Update the connection status.
-      status = Status.connecting;
-      _statusController.add(status);
 
-      // Listen for messages on the connection to update the status.
-      _channelListener = stream.listen((data) {
-        //print('INCOMING: $data');
-        if (status != Status.connected) {
-          status = Status.connected;
-          _statusController.add(status);
-        }
-      }, onError: (error) {
-        status = Status.errored;
+    status = Status.connecting;
+    _statusController.add(status);
+
+    try {
+      // Initialize the connection to the ROS node with a Websocket.
+      WebSocket.connect(url).then((socket) {
+        // Convert the WebSocket to a WebSocketChannel.
+        _channel = IOWebSocketChannel(socket);
+        stream = _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
+
+        // Update the connection status.
+        status = Status.connected;
         _statusController.add(status);
-      }, onDone: () {
-        status = Status.closed;
+
+        // Listen for messages on the connection to update the status.
+        _channelListener = stream.listen((data) {
+          //print('INCOMING: $data');
+        }, onError: (error) {
+          status = Status.errored;
+          _statusController.add(status);
+        }, onDone: () {
+          status = Status.closed;
+          _statusController.add(status);
+        });
+      }).catchError((e) {
+        status = Status.errored;
         _statusController.add(status);
       });
     } catch (e) {
