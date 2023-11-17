@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 // ignore: uri_does_not_exist
@@ -16,6 +17,7 @@ import 'request.dart';
 
 /// Status enums.
 enum Status { none, connecting, connected, closed, errored }
+
 enum TopicStatus {
   subscribed,
   unsubscribed,
@@ -76,11 +78,11 @@ class Ros {
     try {
       // Initialize the connection to the ROS node with a Websocket channel.
       _channel = initializeWebSocketChannel(url);
-      stream =
-          _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
+      stream = _channel.stream.asBroadcastStream().map((raw) => json.decode(raw));
       // Update the connection status.
-      status = Status.connected;
+      status = Status.connecting;
       _statusController.add(status);
+
       // Listen for messages on the connection to update the status.
       _channelListener = stream.listen((data) {
         //print('INCOMING: $data');
@@ -95,9 +97,11 @@ class Ros {
         status = Status.closed;
         _statusController.add(status);
       });
-    } on WebSocketChannelException  {
-      status = Status.errored;
-      _statusController.add(status);
+    } catch (e) {
+      if (e is WebSocketChannelException || e is SocketException) {
+        status = Status.errored;
+        _statusController.add(status);
+      }
     }
   }
 
@@ -152,7 +156,7 @@ class Ros {
   /// Sends a set_level request to the server.
   /// [level] can be one of {none, error, warning, info}, and
   /// [id] is the optional operation ID to change status level on
-  void setStatusLevel({String ?level, int ?id}) {
+  void setStatusLevel({String? level, int? id}) {
     send({
       'op': 'set_level',
       'level': level,
@@ -183,6 +187,7 @@ class Ros {
     serviceCallers++;
     return 'call_service:' + name + ':' + ids.toString();
   }
+
   @override
   bool operator ==(other) {
     return other.hashCode == hashCode;
