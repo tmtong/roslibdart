@@ -109,6 +109,8 @@ class Ros {
       if (e is WebSocketChannelException || e is SocketException) {
         status = Status.errored;
         _statusController.add(status);
+      } else {
+        rethrow;
       }
     }
   }
