@@ -16,7 +16,7 @@ repository: https://github.com/tmtong/roslibdart
 version: 0.0.1-dev+3
 
 environment:
-  sdk: ">=2.16.0-134.5.beta <3.0.0"
+  sdk: '^3.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions

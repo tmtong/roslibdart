@@ -5,8 +5,7 @@ import 'ros.dart';
 import 'request.dart';
 
 // Receiver function to handle requests when the service is advertising.
-typedef ServiceHandler = Future<Map<String, dynamic>>? Function(
-    Map<String, dynamic> args);
+typedef ServiceHandler = Future<Map<String, dynamic>>? Function(Map<String, dynamic> args);
 
 /// Wrapper to interact with ROS services.
 class Service {
@@ -34,15 +33,14 @@ class Service {
   StreamSubscription? listener;
 
   /// Call the service with a request ([req]).
-  Future call(dynamic req) {
+  Future call(Map<String, dynamic> req) {
     // The service can't be called if it's currently advertising.
     if (isAdvertised) return Future.value(false);
     // Set up the response receiver by filtering data from the ROS node by the ID generated.
     final callId = ros.requestServiceCaller(name);
-    final receiver = ros.stream.where((message) => message['id'] == callId).map(
-        (Map<String, dynamic> message) => message['result'] == null
-            ? Future.error(message['values']!)
-            : Future.value(message['values']));
+    final receiver = ros.stream
+        .where((message) => message['id'] == callId)
+        .map((Map<String, dynamic> message) => message['result'] == null ? Future.error(message['values']!) : Future.value(message['values']));
     // Wait for the receiver to receive a single response and then return.
     final completer = Completer();
 
